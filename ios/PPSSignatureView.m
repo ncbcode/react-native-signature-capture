@@ -401,7 +401,6 @@ static PPSSignaturePoint ViewPointToGL(CGPoint viewPoint, CGRect bounds, GLKVect
 	penThickness = penThickness * lowPassFilterAlpha + newThickness * (1 - lowPassFilterAlpha);
 	
 	if ([p state] == UIGestureRecognizerStateBegan) {
-		
 		previousPoint = l;
 		previousMidPoint = l;
 		
@@ -413,10 +412,7 @@ static PPSSignaturePoint ViewPointToGL(CGPoint viewPoint, CGRect bounds, GLKVect
 		addVertex(&length, previousVertex);
 		
 		self.hasSignature = YES;
-		[self.manager publishDraggedEvent];
-		
 	} else if ([p state] == UIGestureRecognizerStateChanged) {
-		
 		CGPoint mid = CGPointMake((l.x + previousPoint.x) / 2.0, (l.y + previousPoint.y) / 2.0);
 		
 		if (distance > QUADRATIC_DISTANCE_TOLERANCE) {
@@ -441,7 +437,6 @@ static PPSSignaturePoint ViewPointToGL(CGPoint viewPoint, CGRect bounds, GLKVect
 				previousVertex = v;
 			}
 		} else if (distance > 1.0) {
-			
 			PPSSignaturePoint v = ViewPointToGL(l, self.bounds, StrokeColor);
 			[self addTriangleStripPointsForPrevious:previousVertex next:v];
 			
@@ -451,14 +446,14 @@ static PPSSignaturePoint ViewPointToGL(CGPoint viewPoint, CGRect bounds, GLKVect
 		
 		previousPoint = l;
 		previousMidPoint = mid;
-		
 	} else if (p.state == UIGestureRecognizerStateEnded | p.state == UIGestureRecognizerStateCancelled) {
-		
 		PPSSignaturePoint v = ViewPointToGL(l, self.bounds, (GLKVector3){1, 1, 1});
 		addVertex(&length, v);
 		
 		previousVertex = v;
 		addVertex(&length, previousVertex);
+		
+		[self.manager publishDraggedEvent];
 	}
 	
 	[self setNeedsDisplay];
